@@ -18,13 +18,14 @@ async def attachments_to_files(attached,spoiler=False):
         filelist.insert(len(filelist),file)
     return filelist
     
-my_id = 347198887309869078
+my_id = 525495267537977344
 
 
 client = discord.Client()
 
 @client.event
 async def on_ready():
+    await client.change_presence(status=discord.Status.offline)
     print('hello world')
 
 curser = 0
@@ -45,17 +46,35 @@ async def on_message(message):
             return
         await message.mentions[0].add_roles(curse,reason="cursed")
         cursed = 1
-        cursevictim = message.mentions[0]
-        curser = message.author
         await message.channel.send("my mentality")
-    if cursed == 1:
-        if dead in cursevictim.roles or dead in curser.roles:
-            await message.channel.send(f"{message.mentions[0].mention} you are no longer cursed")
-            await cursevictim.remove_roles(curse,reason="not cursed")
-            cursed = 0
-            cursevictim = 0
-            curser = 0
-            return
+    if ("you are no longer cursed" in message.content) and (message.mentions != []) and (message.author == client.user):
+        cursed = 0
 
+@client.event
+async def on_member_update(before, after):
+    
+    dead = discord.utils.get(after.guild.roles, id = 714535509279637525)
+    curse = discord.utils.get(after.guild.roles, id = 750130819099656284)
+    general = discord.utils.get(after.guild.channels, id = 712716066618605591)
+    
+    if after.id == my_id:
+        #linking status
+        try:
+            if after.activity.name == "Spotify":
+                await client.change_presence(status=after.status, activity=discord.Activity(name=after.activity.name, type=discord.ActivityType.listening))
+            elif after.activity.type == discord.ActivityType.streaming:
+                await client.change_presence(status=after.status, activity=discord.Activity(name=after.activity.name, url=after.activity.url, type=discord.ActivityType.streaming))
+            else:
+                await client.change_presence(status=after.status, activity=after.activity)
+        except AttributeError or IndexError:
+            await client.change_presence(status=after.status, activity=after.activity)
+        #this reality
+        try:
+            if dead in after.roles:
+                await general.send(f"{curse.members[0].mention} you are no longer cursed")
+                await curse.members[0].remove_roles(curse,reason="not cursed")
+        except IndexError:
+            return
+            
 
 client.run(token)
