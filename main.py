@@ -18,7 +18,7 @@ async def attachments_to_files(attached,spoiler=False):
         filelist.insert(len(filelist),file)
     return filelist
     
-my_id = 525495267537977344
+my_id = 347198887309869078
 
 
 client = discord.Client()
