@@ -7,6 +7,8 @@ from discord.ext import commands
 import asyncio
 import random
 
+intents = discord.Intents.all()
+
 with open("tokenfile", "r") as tokenfile:
     token=tokenfile.read()
 
@@ -21,7 +23,7 @@ async def attachments_to_files(attached,spoiler=False):
 my_id = 347198887309869078
 
 
-client = discord.Client()
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
